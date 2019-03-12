@@ -223,7 +223,7 @@ postgres=# CREATE EXTENSION pgcrypto;
      4. If the password in the database is equivalent to crypt(clear text password entered, password in database)
         - Authenticated
      5. Else
-	- Denied
+        - Denied
 	
 ```
 $count = pg_num_rows($result);
