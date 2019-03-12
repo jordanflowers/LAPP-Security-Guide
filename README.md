@@ -22,6 +22,6 @@ A guide to securing a LAPP stack in regards to encrypting the PostgreSQL databas
 
 ![](screenshots/selectcd.JPG)
 
-  - Highlight the IDE disk controller, and click the CD on the right
-  - Navigate to the Ubuntu 18.04 ISO image
+   - Highlight the IDE disk controller, and click the CD on the right
+   - Navigate to the Ubuntu 18.04 ISO image
 5. Boot your VM, and install Ubuntu
