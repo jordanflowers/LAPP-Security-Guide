@@ -162,8 +162,10 @@ postgres=# CREATE EXTENSION pgcrypto;
 * PHP config switches:
   - Make sure that in the php, the database, user, and password is entered correctly on the connect line:
     - In the create_user.php code:
-```$dbconn = pg_connect("dbname=userdb user=phpinserter password=inserterPW");```	
+
+```$dbconn = pg_connect("dbname=userdb user=phpinserter password=inserterPW");```
     - In the reader_user.php code:
+
 ```$dbconn = pg_connect("dbname=userdb user=phpreader password=readerPW");```
 		
 		
