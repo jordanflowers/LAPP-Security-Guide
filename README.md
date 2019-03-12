@@ -128,6 +128,7 @@ userdb=#
     - PhpReader
     - PhpInserter
   - Grant both users the ability to connect to the database, and to use the database:
+
 **BE SURE THAT THE USER NAME DOES NOT HAVE UPPERCASE CHARACTERS**
 ```	
 postgres=# CREATE USER phpreader WITH PASSWORD 'readerPW';
