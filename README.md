@@ -54,6 +54,8 @@ A guide to securing a LAPP stack in regards to encrypting the PostgreSQL databas
 
 ### Configure PostgreSQL:
 * Switch to the root user and set the password for the postgres user:
-	```~$ sudo -i -u root\nroot@jjf3f-VirtualBox:~$\n~$ passwd postgres```
+```~$ sudo -i -u root
+root@jjf3f-VirtualBox:~$
+~$ passwd postgres```
 
 * Switch to the 
