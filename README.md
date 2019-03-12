@@ -87,7 +87,88 @@ It is possible to install phppgadmin at this point to get a visual configuration
 
 Now that the system is configured, we can create the database
 
+## PostgreSQL Database Creation and Role Configuration
 
+### Create the database and userpass table:
+
+* Create database: 
+```
+postgres=# CREATE DATABASE "userdb";
+CREATE DATABASE
+postgres=# GRANT ALL ON DATABASE "userdb" TO postgres;
+GRANT
+```
+* Switch to the database:
+```
+postgres=# \connect userdb
+You are now connected to database "userdb" as user "postgres".
+userdb=# 
+```
+* Create Table:
+```	
+userdb=# CREATE TABLE userpass (
+userdb(# uname VARCHAR (50) UNIQUE NOT NULL PRIMARY KEY,
+userdb(# pass VARCHAR (60) NOT NULL
+userdb(# );
+CREATE TABLE
+```
+* Add the following constraints to ensure the attributes are configured correctly:
+```	
+userdb=# ALTER TABLE userpass ADD CONSTRAINT unameLengthCheck CHECK (char_length(uname) >= 3);
+ALTER TABLE
+userdb=# ALTER TABLE userpass ADD CONSTRAINT pwLengthCheck CHECK (char_length(pass) >= 8);
+ALTER TABLE
+userdb=# ALTER TABLE userpass ADD CONSTRAINT makeunique UNIQUE (uname);
+ALTER TABLE
+userdb=# 
+```
+
+* Create the users of the database:
+  - We want to create two separate users:
+    - PhpReader
+    - PhpInserter
+  - Grant both users the ability to connect to the database, and to use the database:
+**BE SURE THAT THE USER NAME DOES NOT HAVE UPPERCASE CHARACTERS**
+```	
+postgres=# CREATE USER phpreader WITH PASSWORD 'readerPW';
+CREATE ROLE
+postgres=# CREATE USER phpinserter WITH PASSWORD 'inserterPW';
+CREATE ROLE
+postgres=# GRANT CONNECT ON DATABASE userdb TO phpreader;
+GRANT
+postgres=# GRANT CONNECT ON DATABASE userdb TO phpinserter;
+GRANT
+userdb=# GRANT USAGE ON SCHEMA public TO phpinserter;
+GRANT
+userdb=# GRANT USAGE ON SCHEMA public TO phpreader;
+GRANT
+```
+* Grant phpReader only the ability to select on the userpass table, and phpInserter only the ability to insert on the userpass table:
+```
+userdb=# GRANT SELECT ON userpass TO phpreader;
+GRANT
+userdb=# GRANT INSERT ON userpass TO phpinserter;
+GRANT
+```
+		
+		
+* Enable pgcrypto:
+  - We need to enable pgcrypto so that the crypt function will work in php:
+```
+postgres=# CREATE EXTENSION pgcrypto;
+```
+
+* PHP config switches:
+  - Make sure that in the php, the database, user, and password is entered correctly on the connect line:
+    - In the create_user.php code:
+```$dbconn = pg_connect("dbname=userdb user=phpinserter password=inserterPW");```	
+    - In the reader_user.php code:
+```$dbconn = pg_connect("dbname=userdb user=phpreader password=readerPW");```
+		
+		
+* Restart Postgresql:
+		
+	```~$ sudo systemctl restart postgresql```
 
 
 
