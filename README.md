@@ -67,15 +67,11 @@ psql (10.6 (Ubuntu 10.6-0ubuntu0.18.04.1))
 Type "help" for help.
 ```
 	
-	
-		
-	```postgres=# \password postgres```
-	
-	```Enter new password: ```
-	
-	```Enter it again: ```
-	
-	```postgres=# \q```
+```postgres=# \password postgres
+Enter new password:
+Enter it again:
+postgres=# \q
+```
 	
 
 
