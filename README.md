@@ -13,4 +13,4 @@ A guide to securing a LAPP stack in regards to encrypting the PostgreSQL databas
 ### Virtual box steps:
 1. Click "New" on Virtual Box:
 
-![](screenshots/CreateNewVM.JPG)
+* ![](screenshots/CreateNewVM.JPG)
