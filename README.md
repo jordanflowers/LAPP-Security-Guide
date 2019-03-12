@@ -289,8 +289,9 @@ The following is the login page php file:
 				
 ![](screenshots/moresecurerow.JPG)
 
-   - Then if $row[0] is equivalent to $test, the user has entered the correct password.
-     - This property has an explanation in the section, "Security of Username and Password"
+Then, if $row[0] is equivalent to $test, the user has entered the correct password.
+This property has an explanation in the section, "Security of Username and Password"
+
 4. Instead of using the logic of more than 0 entries returned, we should test to make sure there is only ONE entry returned:
    - More secure PHP code:
 
