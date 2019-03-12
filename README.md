@@ -17,5 +17,5 @@ A guide to securing a LAPP stack in regards to encrypting the PostgreSQL databas
 
 2. Select your memory (recommended 4GB at least)
 3. Create new virtual hard disk (VDI)
- - At least 15GB
+  * At least 15GB
 4. Now that your VM is allocated, click Settings and click Storage
