@@ -171,5 +171,24 @@ postgres=# CREATE EXTENSION pgcrypto;
 		
 	```~$ sudo systemctl restart postgresql```
 
+## Testing a User and Password
+* Go to 127.0.0.1 in Firefox:
 
+![](screenshots/samplepage.JPG)
+
+* Let's try to Register a new user:
+  - Type in the username, and password
+  - You should get the following message:
+  
+![](screenshots/accountcreated.JPG)
+
+* We can check to see if the user is in the table by returning to the login page
+* Type in your username and password. If entered correctly, the following message should display:
+
+![](screenshots/authenticated.JPG)
+
+* Let's view the entry in the database
+  - Navigate to the database and enter the following query:
+  
+	```userdb=# Select * from userpass;```
 
