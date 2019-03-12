@@ -296,3 +296,95 @@ This property has an explanation in the section, "Security of Username and Passw
    - More secure PHP code:
 
 ![](screenshots/moresecurecount.JPG)
+
+## Mod Security
+
+### Intro:
+* In order to test Mod Security, we will be using the notsecurephp files instead for demonstration purposes.
+* You will also need the postgresql database set up at this point for the test to work.
+* Create a few users on the 127.0.0.1/create_user.html page, and then we can get started
+  - Here is a view of the users I have entered:
+
+![](screenshots/moresecurecount.JPG)
+
+### SQL injection attack:
+* So, in this attack, the attacker would like to login as user jflowers. Thus, the attacker would like to return one row, jflowers, without knowing the password.
+  - For the username, the attacker will enter just "jflowers"
+  - For the password, the attacker will enter the following (without quotes): "notjordanspassword' or 1=1;--"
+  - For purposes of demonstration, I changed the type of the textbox to "text" (highlighted in green) so that we can see what the attacker entered:
+			§ 
+![](screenshots/moresecurecount.JPG)
+
+**The SQL injection attack was successful in authenticating the user jflowers without their password.**
+	
+* Now, let's be really malicious:
+  - Type in "notjordanspassword' or 1=1; drop table userpass;--"
+
+![](screenshots/moresecurecount.JPG)
+
+### Installing and configuring mod security (reference hostadvice.com):
+
+* Mod Security allows for the prevention of a plethora of web attacks including XSS, XSRF, SQLi, and many more. For the purposes of this example, we will be preventing all, and demoing the SQLi prevention.
+	 
+* Run the following to download and install mod security
+
+	```~$ sudo apt-get install libapache2-mod-security2```
+
+* Restart apache:
+
+	```~$ sudo service apache2 restart```
+
+* Ensure the module was loaded by running
+
+	```~$ sudo apachectl -M | grep --color security```
+		
+* You should see "security2_module (shared)"
+* In order to load the config file that comes with mod security, run the following command:
+
+	```~$ sudo mv /etc/modsecurity/modsecurity.conf-recommended /etc/modsecurity/modsecurity.conf```
+		
+	- Edit the modsecurity.conf file by entering:
+		~$ sudo vim /etc/modsecurity/modsecurity.conf
+		
+		- Make the following changes:
+			§ Set "SecRuleEngine" to "On" instead of "Off"
+				□ By default mod security only detects which logs in the log file located at /var/log/apache2/modsec_audit.log
+			§ Set "SecResponseBodyAccess" to "Off" instead of "On"
+
+	- Restart apache:
+		~$ sudo service apache2 restart
+		
+	
+Setting Rules:
+	- In order for mod security to know how to use the Core Rule Set, we need to tell mod security where to look:
+		- Rename the default rules directory to make a backup:
+			~$ sudo mv /usr/share/modsecurity-crs /usr/share/modsecurity-crs.bk
+
+		- Download the updated ruleset from github (if you don’t have git installed, run ~$ sudo apt install git
+			~$ sudo git clone https://github.com/SpiderLabs/owasp-modsecurity-crs.git /usr/share/modsecurity-crs
+	
+		- Copy the sample config out of example into the actual config file:
+			~$ sudo cp /usr/share/modsecurity-crs/crs-setup.conf.example /usr/share/modsecurity-crs/csr-setup.conf
+			
+		- Edit the security2.conf file to enable these rules:
+			~$ sudo nano /etc/apache2/mods-enabled/security2.conf
+		
+		- Add these lines within the <IfModule> </IfModule>:
+			IncludeOptional /usr/share/modsecurity-crs/*.conf
+			IncludeOptional /usr/share/modsecurity-crs/rules/*.conf
+	
+		- Save the file and restart apache:
+			~$ sudo service apache2 restart
+			
+Testing Mod Security:
+	- Perform the same attack above:
+		- For the username, the attacker will enter just "jflowers"
+		- For the password, the attacker will enter the following (without quotes): "notjordanspassword' or 1=1;--"
+	- As you can see, the server returns a 403 forbidden:
+		- 
+		
+	- Thus, mod security is installed and working. If the user wants to check logs for mod security, these can be located in the following location:
+		- /var/log/apache2/modsec_audit.log
+	- Here is what rule we triggered with the sql injection:
+		- 
+	
