@@ -31,13 +31,17 @@ A guide to securing a LAPP stack in regards to encrypting the PostgreSQL databas
 
 ### Install and update the system:
 * Update the OS:
-```~$ sudo apt update```
+
+	```~$ sudo apt update```
 		
 * Install Apache:
-```~$ sudo apt install apache2 apache2-utils```
+
+	```~$ sudo apt install apache2 apache2-utils```
 		
 * Install PHP:
-```~$ sudo apt install php php-pgsql libapache2-mod-php```
+
+	```~$ sudo apt install php php-pgsql libapache2-mod-php```
 	
-*Install PostgreSQL
-```~$ sudo apt install postgresql postgresql-contrib```
+* Install PostgreSQL
+
+	```~$ sudo apt install postgresql postgresql-contrib```
