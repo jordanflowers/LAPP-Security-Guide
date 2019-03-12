@@ -12,4 +12,4 @@ A guide to securing a LAPP stack in regards to encrypting the PostgreSQL databas
 		○ Install Ubuntu on the system in your own way. You can skip the Virtualbox steps
 	### Virtual box steps:
 	1. Click "New" on Virtual Box:
-		![Create new VM](screenshots/CreateNewVM.JPG?raw=true)
+		![Create new VM](https://github.com/jordanflowers/LAPP-Security-Guide/blob/master/screenshots/CreateNewVM.JPG)
