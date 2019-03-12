@@ -221,9 +221,9 @@ postgres=# CREATE EXTENSION pgcrypto;
      2. If there is only one row returned (There should only be 1 unless an attack was performed) we continue
      3. Get the password in the database
      4. If the password in the database is equivalent to crypt(clear text password entered, password in database)
-        a) Authenticated
+        - Authenticated
      5. Else
-	a) Denied
+	- Denied
 	
 ```
 $count = pg_num_rows($result);
