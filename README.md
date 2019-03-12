@@ -243,3 +243,48 @@ $count = pg_num_rows($result);
 		}
 	}
 ```
+
+## PHP Hardening
+
+### Intro
+* For this section, we will be using the less secure php files found in the /notsecurephp/ directory
+
+### Registration PHP Code:
+* Immediately you may notice that we do not use encryption on our passwords just to show passwords can be stored in cleartext:
+
+![](screenshots/nonsecurephpcreate.JPG)
+
+* Differences between the non-secure register a new user php code above, and the secure php code that we have used previously:
+  1. We use the root user, postgres, to do all of our database accesses, which allows us to perform deletes, drops, selects, and basically anything that we want to. The way we fix this in the more secure code is by implementing the phpInserter role that can only insert to the database:
+     - More secure php code:
+
+![](screenshots/moresecureconnect.JPG)
+
+   2. The hashing with a salt solution applied to the password. Here we just are storing the password as cleartext, where in our more secure PHP code, the password is hashed and salted using the blowfish algorithm:
+      - More secure php code:
+      
+![](screenshots/moresecureinsert.JPG)
+
+   3. We also implement the stripslashes call integrated into php that may prevent against any variety of attacks:
+      - More secure php code (added):
+ 
+![](screenshots/stripslash.JPG)
+
+Login PHP Code:
+	- The following is the login page php file:
+		- 
+
+	- As you can see, this is an extremely bad php authentication file. The SQL query just finds and instances where the username and password are in the database together. Then, if more than 0 tuples are returned, the user is authenticated. We will see later in the mod security section how this code can be attacked.
+	- Differences between the non-secure register a new user php code above, and the secure php code that we have used previously:
+		1. **See #1 above in the register a new user differences
+		2. **See #3 above in the register a new user differences
+		3. Instead of select *, we should select just the password, and test that against a hashed password using the crypt function
+			i. More secure PHP code:
+				1) 
+				
+				2) 
+			ii. Then if $row[0] is equivalent to $test, the user has entered the correct password.
+				1) This property has an explanation in the section, "Security of Username and Password"
+		4. Instead of using the logic of more than 0 entries returned, we should test to make sure there is only ONE entry returned:
+			i. More secure PHP code:
+				1) 
