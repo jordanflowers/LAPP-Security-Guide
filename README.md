@@ -399,3 +399,168 @@ This property has an explanation in the section, "Security of Username and Passw
 
 ![](screenshots/modsecuritylog.JPG)
 	
+## Installing Certificates
+
+### Intro
+* There is a huge problem that may be staring the security professionals in the face, and that is the following issue:
+  - This part is optional, but if you run wireshark and run the server, you will see the HTTP in clear text.
+    - Even though we are sending the password and username data as a POST, these are cleartext if sniffed:
+
+![](screenshots/modsecuritylog.JPG)
+
+* What is the solution to this problem? Certificates
+  - Before doing anything, we should decide on a domain name. We will go with mywebsite.com
+
+### Become a Certificate Authority:
+* Create the following directories (blue) and files (white):
+
+![](screenshots/modsecuritylog.JPG)
+
+  - Where they are all within demoCA and the index.txt file is empty and the serial file only holds a four digit number (1234 or something like that)
+
+* Next, copy the openssl config file into your demoCA directory:
+		
+	```~/Documents/demoCA$ cp /usr/lib/ssl/openssl.cnf ./```
+
+* Edit the openssl.cnf file, and make the following change to policy:
+
+![](screenshots/modsecuritylog.JPG)
+
+* Run the following line:
+
+	```$ openssl req -new -x509 -keyout ca.key -out ca.crt -config openssl.cnf```
+		
+  - The "req" command creates a self-signed certificate to be used as a root certificate authority in our case.
+  - "new" means that we will be generating a new certificate request.
+  - "-x509" indicates that we need a self-signed certificate instead of an actual request. This is because we are a self-signed root certificate authority.
+  - "-keyout" indicates the private key that we have created will be written to ca.key.
+  - "-out" indicates this is where standard out is redirected to .
+  - "-config" indicates we want to use our own configuration file, openssl.cnf.
+  - Source: https://wiki.openssl.org/index.php/Manual:Req(1)
+
+![](screenshots/modsecuritylog.JPG)
+
+* Now, we are a Certificate Authority and we can create a certificate for our website
+
+Create a Certificate for mywebsite.com
+	- First, create a public/private key pair for mywebsite.com:
+		$ openssl genrsa -aes128 -out server.key 1024 
+		
+			- The "genrsa" command generates an RSA private key. 
+			- "-aes128" is the cipher that we will be using before outputting the private key. 
+			- "-out" is the output redirect to the server.key file. 
+			- The size of the private key is 1024 bits.
+				□ Source: https://wiki.openssl.org/index.php/Manual:Genrsa(1)
+		
+		- 
+	
+	- Next, Generate a Certificate Signing Request:
+		- Now that we have a key file, we must generate the CSR. This will include our public key, and it will be sent to the certificate authority.
+
+		- The certificate authority creates a certificate for the key after making sure the information received in the request is the actual server (verify the identity that third parties have to do)
+	
+		- Run the following:
+		$ openssl req -new -key server.key -out server.csr -config openssl.cnf
+			
+			- The main thing that has changed between this command and the previous command from section 3.1 is that we are no longer wanting a self-signed certificate (due to the lack of -x509). We are actually requesting by specifying the "-key" option. 
+			- "-key" indicates where our private key is located for the request.
+			- Source: https://wiki.openssl.org/index.php/Manual:Req(1)
+		
+		- 
+		**NOTE THE COMMON NAME. THIS IS A MUST FOR CERTIFICATES. ENTER YOUR DOMAIN NAME THERE.**
+		
+	- Generate the Certificates:
+		- As the certificate authority, we have to sign the CSR file to form the certificate. In order to do this, run the command to turn the request (server.csr generated above) into a x509 certificate (server.crt) using the files from earlier, ca.crt and ca.key:
+
+		- First, run the following to have the directories in order:
+			- ~/Documents/demoCA$ mv ca.crt ca.key server.csr server.key openssl.cnf ../ && cd ../
+
+		- Then, generate the certificate:
+		
+			$ openssl ca -in server.csr -out server.crt -cert ca.crt -keyfile ca.key -config openssl.cnf
+			
+				- "ca" is used to sign certificate requests. It will generate the crl, and it will maintain the database (index.txt) of issued certificates.
+				- "-in" indicates the request we will sign.
+				- "-out" is where the certificate will be sent.
+				- "-cert" points to the certificate authority's certificate file.
+				- "-keyfile" is where the private key is located
+				- "-config" specifies our config file we want to be ran
+				- Source: https://www.openssl.org/docs/man1.0.2/apps/ca.html
+
+
+		- Here is the output you should get:
+			- 
+			
+	- Editing the hosts file:
+		- Edit /etc/hosts:
+			~$ sudo vim /etc/hosts
+			
+		- Put the top line of my file into your file just like this so that when we type mywebsite.com, we will resolve to 127.0.0.1 instead of performing a DNS request.
+		
+			- 
+
+
+		- The page should look like this with the error because it is http only right now:
+		
+			
+			
+Enable SSL for Apache and Install Certificates:
+	- Enable SSL for Apache:
+		- Navigate to /etc/apache2/sites-available/ and copy the configuration file for the port 80 configuration file into a new configuration file that will be used for our https site:
+			/etc/apache2/sites-available$ sudo cp 000-default.conf 000-default443.conf
+
+		- Let's edit the file to enable SSL:
+			/etc/apache2/sites-available$ sudo vim 000-default443.conf
+	
+			- Change <VirtualHost *:80> to <VirtualHost *:443> to indicate the port number used for this site
+			
+			- Add the following lines below the DocumentRoot line:
+					SSLEngine on
+					SSLCertificateFile /home/jjf3f/Documents/server.crt
+					SSLCertificateKeyFile /home/jjf3f/Documents/server.key
+					SSLCertificateChainFile /home/jjf3f/Documents/ca.crt
+		
+			- Your file should look like this:
+				
+				
+
+			- Navigate to /etc/apache2/sites-enabled/ and create a symbolic link between the file we just created, and a file in the sites-enabled directory:
+				/etc/apache2/sites-enabled$ sudo ln -s ../sites-available/000-default443.conf 000-default443.conf
+				
+			- Enable SSL on the system by running the following:
+				/etc/apache2/sites-enabled$ sudo a2enmod ssl
+				
+			- Restart apache:
+				/etc/apache2/sites-enabled$ sudo systemctl restart apache2
+				
+				**Here you should have to type in the password for the certificate**
+			
+
+		- Now, the website should be up, and it should display the following when going to https://mywebsite.com:
+			- 
+	
+			- The certificate is untrusted because Firefox does not have the certificate authority's certificate installed onto the browser, so let's add it:
+				1. Go to Preferences:
+					a) 
+	
+				2. Navigate to view certificates:
+					a) 
+			
+				3. Import under authorities:
+					a) 
+			
+				4. Select ca.crt and hit OK:
+					a) 
+			
+				5. You should see the following entry:
+					a. 
+		
+		
+		Result:
+			- After a restart of Firefox, we see that the certificate is trusted:
+				□ 
+		
+			- Can Wireshark see those passwords now?
+				
+				No, it is all encrypted.
+		
