@@ -79,6 +79,13 @@ postgres=# \q
 * Edit the instances that say "peer", and change them to "md5"
   - Your file should look like this:
 
+![](screenshots/peertomd5.JPG)
+
+**Take note of line 86 that has been added. This is to ensure the authentication of any other database users**
+
+It is possible to install phppgadmin at this point to get a visual configuration of your database, but for the rest of this guide, we will be using the command line (psql)
+
+Now that the system is configured, we can create the database
 
 
 
