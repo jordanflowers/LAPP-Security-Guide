@@ -269,7 +269,7 @@ $count = pg_num_rows($result);
 3. We also implement the stripslashes call integrated into php that may prevent against any variety of attacks:
       - More secure php code (added):
  
-stripslash.JPG
+![](screenshots/stripslash.JPG)
 
 ### Login PHP Code:
 
