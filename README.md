@@ -72,7 +72,13 @@ Enter new password:
 Enter it again:
 postgres=# \q
 ```
+* Switch back to the user created originally or root, and edit the following config file:
 	
+	```~$ sudo subl /etc/postgresql/10/main/pg_hba.conf```
+	
+* Edit the instances that say "peer", and change them to "md5"
+  - Your file should look like this:
+
 
 
 
