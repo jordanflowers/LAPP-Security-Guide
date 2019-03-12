@@ -14,6 +14,7 @@ A guide to securing a LAPP stack in regards to encrypting the PostgreSQL databas
 1. Click "New" on Virtual Box:
 
 ![](screenshots/CreateNewVM.JPG)
+
 2. Select your memory (recommended 4GB at least)
 3. Create new virtual hard disk (VDI)
    - At least 15GB
@@ -21,6 +22,6 @@ A guide to securing a LAPP stack in regards to encrypting the PostgreSQL databas
 
 ![](screenshots/selectcd.JPG)
 
-		- Highlight the IDE disk controller, and click the CD on the right
+  - Highlight the IDE disk controller, and click the CD on the right
   - Navigate to the Ubuntu 18.04 ISO image
 5. Boot your VM, and install Ubuntu
