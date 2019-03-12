@@ -61,11 +61,12 @@ A guide to securing a LAPP stack in regards to encrypting the PostgreSQL databas
 	
 
 * Switch to the postgres user and perform the following commands to create a new password for the default postgres user's database:
-	```~$ psql```
+```~$ psql
 	
-	```psql (10.6 (Ubuntu 10.6-0ubuntu0.18.04.1))```
+psql (10.6 (Ubuntu 10.6-0ubuntu0.18.04.1))
 	
-	```Type "help" for help.```
+Type "help" for help.
+```
 	
 	
 		
