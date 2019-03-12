@@ -13,4 +13,9 @@ A guide to securing a LAPP stack in regards to encrypting the PostgreSQL databas
 ### Virtual box steps:
 1. Click "New" on Virtual Box:
 
-* ![](screenshots/CreateNewVM.JPG)
+![](screenshots/CreateNewVM.JPG)
+
+2. Select your memory (recommended 4GB at least)
+3. Create new virtual hard disk (VDI)
+ - At least 15GB
+4. Now that your VM is allocated, click Settings and click Storage
