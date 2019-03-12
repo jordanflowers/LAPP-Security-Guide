@@ -45,3 +45,15 @@ A guide to securing a LAPP stack in regards to encrypting the PostgreSQL databas
 - Install PostgreSQL:
 
 	```~$ sudo apt install postgresql postgresql-contrib```
+
+### Install files to correct place:
+* Place the php and html files in the directory /var/www/html
+* You will get errors if you try and test the page after this step because the database has not been created yet. However, the directory should look like this:
+
+![](screenshots/installfilestocorrectplace.JPG)
+
+### Configure PostgreSQL:
+* Switch to the root user and set the password for the postgres user:
+	```~$ sudo -i -u root\nroot@jjf3f-VirtualBox:~$\n~$ passwd postgres```
+
+* Switch to the 
