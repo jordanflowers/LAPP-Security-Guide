@@ -578,7 +578,101 @@ SSLCertificateChainFile /home/jjf3f/Documents/ca.crt
 
 * Can Wireshark see those passwords now?
 
-![](screenshots/wiresharkFailure.JPG)
+![](screenshots/wiresharkfailure.JPG)
 
 No, it is all encrypted.
 
+
+## Harden Apache
+
+### Remove server information:
+- On the client side, we can gather some information about the server by inspecting the http headers:
+
+![](screenshots/apacheharden1.JPG)
+
+* Here we will limit the server information sent back to the client.
+  - Navigate to /etc/apache2 and edit the configuration file:
+
+	```/etc/apache2$ sudo vim apache2.conf```
+
+   - Add the following lines:
+```
+ServerTokens Prod
+ServerSignature Off
+```
+   - Restart apache:
+	
+	```/etc/apache2$ sudo systemctl restart apache2```
+
+* Now, the server information is gone:
+
+![](screenshots/apacheharden2.JPG)
+
+### Remove Etag information:
+* The Etag allows attackers to obtain information like child processes, inode numbers, and different MIME boundaries. This fix is required for PCI compliance:
+  - Add the following line in apache2.conf as we did with the server tokens above:
+
+![](screenshots/etag.JPG)
+
+### Create a separate non-privileged user to run apache:
+* Run the following to create a new user belonging to the group, apache:
+
+	```~# groupadd apache```
+	
+	```~# useradd -g apache apache```
+
+* Change the installation directory ownership to the new user:
+
+	```~# chown -R apache:apache /etc/apache2```
+
+* Change the following lines in /etc/apache2/apache2.conf:
+```
+	User apache
+	Group apache
+```
+* Now, the apache process should only run from root once to listen on the ports:
+
+![](screenshots/apacheruningtheprocess.JPG)
+
+**Note that this is not a full solution as you still have to at least run the process once from root in order to listen on 443 and 80, so this step does not harden the system extremely well.**
+
+### Disable Trace:
+* Add the following line in order to disable tracing in order to keep an attacker from stealing cookie information:
+
+![](screenshots/disabletrace.JPG)
+
+### Other Hardening Options:
+* Run the following command to allow us to rewrite any HTTP 1.0 commands
+	
+	```/etc/apache2$ sudo ln ../mods-available/rewrite.load rewrite.load```
+
+* Run the following command to allow us to enable a second layer of XSS protection and Clickjacking attacks
+	
+	```/etc/apache2$ sudo a2enmod headers```
+
+* Add the following lines at the end of your apache2.conf file:
+
+![](screenshots/otherhardeningoptions.JPG) 
+
+
+* Also, add this near the beginning of the apache2.conf file:
+
+	```LoadModule rewrite_module modules/mod_rewrite.so```
+
+
+* Timeout
+  - Change the default value of 300 seconds as a timeout to 60 in the apache2.conf file because 300 seconds leave you vulnerable to DoS.
+
+## Harden PostgreSQL
+
+### User Security:
+* Change your /etc/postgresql/10/main/pg_hba.conf file to look like this:
+
+![](screenshots/postgresharden.JPG)
+
+* Note line 105 where we reject any other users that are trying to connect.
+* Also, I added on lines 86 and 87 our two users for the database that is hosted.
+
+### Other:
+* The other hardening suggestions have already been done database side in regards to user permissions and storing passwords
+* You can also optionally change the port number which would require some editing of the PHP connection strings as well.
