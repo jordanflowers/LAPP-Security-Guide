@@ -1,0 +1,57 @@
+<html>
+<title>Login Page</title>
+
+<h1>Enter your username and password</h1>
+<form action="reader_user.php">
+    <div class="container">
+        <label for="uname"><b>Username</b></label>
+        <input type="text" placeholder="Enter Username" id = "username" required>
+        <br></br>
+        <label for="psw"><b>Password</b></label>
+        <input type="password" placeholder="Enter Password" id = "pass" required>
+        <br></br>
+        <button type = "button"  onclick = "doAJAXstuff(this.form)">
+            Login
+        </button>
+        &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+        <button type = "button"  onclick = "location.href='create_user.html'">
+            Register
+        </button>
+    </div>
+</form>
+<script type = "text/javascript">
+    var username = document.getElementById("username");
+    var pass = document.getElementById("pass");
+    // AJAX part
+    function doAJAXstuff(theform)
+    {
+        //window.alert("username = "+username.value);
+        //window.alert("pass = "+pass.value);
+        //get estimate from server
+        requestAUTH = new XMLHttpRequest();
+
+        requestAUTH.open("POST","reader_user.php?pass="+pass.value+"&username="+username.value, false);
+
+        // After the server gets back with us
+        requestAUTH.onreadystatechange = function ()
+        {
+            if (requestAUTH.readyState == 4)
+            {
+                    if (requestAUTH.status == 200)
+                    {
+            
+                        window.alert("Response from server: "+requestAUTH.responseText);
+                        
+    
+                    }
+                    else if (request.status=404) 
+                    {
+                        alert("Server was not found: data returned is :\n"+requestAUTH.responseText);
+                    }
+            }
+        }
+        requestAUTH.send();
+    
+    }
+</script>
+</html>

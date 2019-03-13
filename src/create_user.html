@@ -1,0 +1,74 @@
+<html>
+<title>Register Page</title>
+
+<h1>Create a new username and password</h1>
+<form action="action_page.php">
+	<div class="container">
+		<label for="uname"><b>Username</b></label>
+		<input type="text" placeholder="Enter Username" id = "username" required>
+		<br></br>
+		
+		
+		<label for="psw"><b>Password</b></label>
+		<input type="password" placeholder="Enter Password" id = "pass" required>
+		<br></br>
+		
+		
+		<label><b>Confirm Password</b></label>
+		<input type="password" placeholder="Renter Password" id = "pass2" required>
+		<br></br>
+		
+		
+		<button type = "button"  onclick = "createUser(this.form)">
+			Create User
+		</button>
+		
+		&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+		
+		<button type = "button"  onclick = "location.href='index.html'">
+			Return
+		</button>
+	</div>
+</form>
+
+<script type = "text/javascript">
+	var username = document.getElementById("username");
+	var pass = document.getElementById("pass");
+	var pass2 = document.getElementById("pass2");
+	function createUser(theform)
+	{
+		if (validate() == false){return;}
+		requestAUTH = new XMLHttpRequest();
+		requestAUTH.open("POST","create_user.php?username="+username.value+"&pass="+pass.value, true);
+		requestAUTH.onreadystatechange = function ()
+		{
+			if (requestAUTH.readyState == 4)
+			{
+					if (requestAUTH.status == 200)
+					{
+						window.alert("Response from server: "+requestAUTH.responseText);
+					}
+					else if (requestAUTH.status==404) 
+					{
+						alert("Server was not found: data returned is :\n"+requestAUTH.responseText);
+					}
+					else if (requestAUTH.status==500) 
+					{
+						alert("Internal Server Error: \n"+requestAUTH.responseText);
+					}
+			}
+		}
+		requestAUTH.send();
+	
+	}	
+	function validate(){
+		if (pass.value != pass2.value){
+			window.alert("Passwords MUST match");
+			return false;
+		}
+		else
+			return true;
+	}
+</script>
+
+</html>
